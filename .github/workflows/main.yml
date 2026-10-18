@@ -1,1 +1,44 @@
-Buildpiptrack.androidapk
+
+name: Build PipTrack Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project files
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Unpack PipTrack project
+        run: unzip -q PipTrack_Android_Project.zip -d unpacked
+
+      - name: Build APK
+        run: gradle --no-daemon -p unpacked/PipTrack_Android_Project assembleDebug
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PipTrack-debug-APK
+          path: unpacked/PipTrack_Android_Project/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
