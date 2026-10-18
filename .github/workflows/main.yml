@@ -1,5 +1,5 @@
  
-name: Build PipTrack Android APK
+name: Build PipTrack Android APK Build
 
 on:
   push:
